@@ -13,6 +13,7 @@
     "sourceMap": true
   },
   "include": [
+    "./tasks",
     "./src",
   ],
   "exclude": [

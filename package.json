@@ -4,6 +4,7 @@
     "main": "index.js",
     "dependencies": {
         "@types/lodash-es": "^4.17.5",
+        "@types/readline-sync": "^1.4.4",
         "ts-node": "^10.4.0",
         "typescript": "^4.5.4"
     },
@@ -32,8 +33,5 @@
             "json",
             "node"
         ]
-    },
-    "bin": {
-        "index": "src/index.ts"
     }
 }
