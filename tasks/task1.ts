@@ -1,5 +1,4 @@
 import * as _ from "lodash";
-import * as readline from 'readline';
 
 
 export interface Student {

@@ -1,3 +1,5 @@
+/* eslint no-console: 0 */
+
 import * as _ from "lodash";
 import * as readline from 'readline';
 import { getStatistics, Student } from '../tasks/task1';
@@ -30,7 +32,7 @@ function strToJsonStr(baseStr:string): string {
 }
 
 
-let rl = readline.createInterface({
+const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });

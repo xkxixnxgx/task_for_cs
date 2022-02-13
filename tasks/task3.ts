@@ -8,7 +8,7 @@ interface holesInNumber {
 
 
 function calculateNumberHoles(number: number): holesInNumber {
-    let sumHoles: number = 0;
+    let sumHoles = 0;
     const ruleForHoles: {[index: number]: number} = {
         0: 1,
         1: 0,
@@ -23,7 +23,7 @@ function calculateNumberHoles(number: number): holesInNumber {
     }
     const numberWithoutDot: string = _.replace(number.toString(), ".", "");
     const absNumberToString: string = _.replace(numberWithoutDot, "-", "");
-    const arrStrings: String[] = _.split(absNumberToString, "");
+    const arrStrings: string[] = _.split(absNumberToString, "");
     const arrNumbers: number[] = _.map(arrStrings, Number);
     for (let i = 0; i < _.size(arrNumbers); i += 1) {
         const numberHoles: number = ruleForHoles[arrNumbers[i]];
