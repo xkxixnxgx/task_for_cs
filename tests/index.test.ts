@@ -91,7 +91,7 @@ test('uniqPermutationsNumbersReturnSuccess', () => {
 })
 
 test('uniqPermutationsNumbersReturnError', () => {
-    const typeConversion: number = Number("bzdbdnzg")
+    const typeConversion = Number("bzdbdnzg")
     const result = uniqPermutationsNumbers(typeConversion);
     expect(result.type).toEqual("error");
 })

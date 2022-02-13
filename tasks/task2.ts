@@ -1,10 +1,11 @@
+import os from 'os';
 import * as _ from "lodash";
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 
 
 function* generateCombinationsNumber(
     strNum: string,
-    level: number = 0,
+    level = 0,
     indexes: boolean[] = [],
     combinations: string[] = [],
     res: string[] = [],
@@ -20,7 +21,7 @@ function* generateCombinationsNumber(
                 res.push(combinations.join(""));
             }
             if (level === len - 1 && combinations.length === len ) {
-                let result: string = combinations.join("");
+                const result: string = combinations.join("");
                 yield result;
             }
         indexes[i] = false;        
@@ -32,9 +33,9 @@ function* generateCombinationsNumber(
 export function createArrUniqCombinations(num:number): string[] {
     const strNum: string = _.map(_.range(num + 1).slice(1), function(o: number) { return o.toString(); }).join("");
     const baseString: string = "0".repeat(num) + strNum;
-    let generator = generateCombinationsNumber(baseString);
-    let setResult: Set<string> = new Set();
-    for(let combination of generator) {
+    const generator = generateCombinationsNumber(baseString);
+    const setResult: Set<string> = new Set();
+    for(const combination of generator) {
         setResult.add(combination)
     }
     const arrResult = Array.from(setResult);
@@ -44,9 +45,9 @@ export function createArrUniqCombinations(num:number): string[] {
 
 function countingRowsOfFile(filePath: string, newLineChar:string): number {
     const file = readFileSync(filePath, 'utf-8');
-    var nLines = 0;
+    let nLines = 0;
     const n = file.length;
-    for( var i = 0; i < n;  ++i ) {
+    for( let i = 0; i < n;  ++i ) {
         if( file[i] === newLineChar ) {
             ++nLines;
         }
@@ -77,7 +78,7 @@ export function uniqPermutationsNumbers(num:number): Result<number> {
     const currentPath: string = __dirname;
     const filePath: string = currentPath + "/task2_result.txt";
     createEmptyFile(filePath);
-    const newLineChar = require('os').EOL;
+    const newLineChar = os.EOL;
     for (let i = 0; i < _.size(arrUniqCombinations); i += 1 ) {
         const line: string = arrUniqCombinations[i];
         if (i === 0) {
