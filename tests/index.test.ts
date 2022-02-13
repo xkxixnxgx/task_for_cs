@@ -1,4 +1,7 @@
-import { getStatistics, sortArrByNumberOfHoles, Student } from '../src/index';
+import { getStatistics, Student } from '../tasks/task1';
+import { createArrUniqCombinations, uniqPermutationsNumbers } from '../tasks/task2';
+import { sortArrByNumberOfHoles } from '../tasks/task3';
+
 
 // for task 1
 test('getStatisticsPositive', () => {
@@ -64,6 +67,55 @@ test('getStatisticsWithNegativeAvgMark', () => {
         );
 })
 
+// for task 2
+test('uniqPermutationsNumbersPositive', () => {
+    function factorial (n:number): number {
+        if (n == 0 || n == 1) {
+            return 1;
+        } else {
+            return n * factorial(n-1);
+        }
+    }
+    
+    const num = 2;
+    const resultMath = factorial(num*2) / factorial(num);
+    const result = uniqPermutationsNumbers(num);
+    if (result.type === "success") {
+        expect(result.countRows).toEqual(resultMath);
+    }
+})
+
+test('uniqPermutationsNumbersReturnSuccess', () => {
+    const result = uniqPermutationsNumbers(2);
+    expect(result.type).toEqual("success");
+})
+
+test('uniqPermutationsNumbersReturnError', () => {
+    const typeConversion: number = Number("bzdbdnzg")
+    const result = uniqPermutationsNumbers(typeConversion);
+    expect(result.type).toEqual("error");
+})
+
+test('generateUniqCombinationsNumberPositive', () => {
+    const num = 2;
+    const result = [
+        "0012",
+        "0021",
+        "0102",
+        "0120",
+        "0201",
+        "0210",
+        "1002",
+        "1020",
+        "1200",
+        "2001",
+        "2010",
+        "2100",
+    ];
+    expect(createArrUniqCombinations(num)).toEqual(result);
+})
+
+
 // for task 3
 test('sortArrByNumberOfHolesPositive', () => {
     const arrNumbers = [89, 46, 0, 694, 3, -7, -4, 98571114];
@@ -79,4 +131,11 @@ test('sortArrByNumberOfHolesEmptyArr', () => {
 
 test('sortArrByNumberOfHolesUndefined', () => {
     expect(sortArrByNumberOfHoles(undefined)).toEqual(undefined);
+})
+
+test('sortArrByNumberOfHolesWithFloat', () => {
+    const arrNumbers = [1.67, -7];
+    expect(sortArrByNumberOfHoles(arrNumbers)).toEqual(
+        [-7, 1.67]
+        );
 })

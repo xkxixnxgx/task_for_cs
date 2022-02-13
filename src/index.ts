@@ -1,106 +1,94 @@
 import * as _ from "lodash";
-
-export interface Student {
-    name: string;
-    avgMark: number;
-}
-
-export interface Statistics {
-    avgMark: number;
-    hughestMark: string;
-    lowestMark: string;
-}
-
-function formatToTwoDecimal(num:number): number {
-    return _.toNumber(num.toFixed(2));
-}
-
-function getOnlyLastNamesFromDuble(array: Student[]): Student[] {
-    const uniqNames: string[] = [...new Set(array.map(s => JSON.stringify(s.name)))].map(s => JSON.parse(s));
-    const arrWithUniqNames: Student[] = [];
-    for (let i = 0; i < _.size(uniqNames); i += 1) {
-        const indexLastName = _.findLastIndex(array, function(o) { return o.name == uniqNames[i]; });
-        arrWithUniqNames.push(array[indexLastName]);
-    }
-    return arrWithUniqNames;
-}
-
-function absAvgMarks(array: Student): Student {
-    const absAvgMark: number = Math.abs(array.avgMark);
-    array.avgMark = absAvgMark;
-    return array;
-}
+import * as readline from 'readline';
+import { getStatistics, Student } from '../tasks/task1';
+import { uniqPermutationsNumbers } from '../tasks/task2';
+import { sortArrByNumberOfHoles } from '../tasks/task3';
 
 
-export function getStatistics(marks: Student[] | undefined ): Statistics | undefined {
-    const result: Statistics = {
-        avgMark: 0,
-        hughestMark: 'not hughest',
-        lowestMark: 'not lowest'
-    };
-    if (!marks) {
-        return undefined;
-    } else if ( _.size(marks) === 0) {
-        return result;
-    } else {
-        const marksUniqNames: Student[] = getOnlyLastNamesFromDuble(marks);
-        const cleanMarks: Student[] = _.map(marksUniqNames, absAvgMarks);
-        const nameOfHughestMark: string = _.maxBy(cleanMarks, "avgMark")?.name ?? "not hughest";
-        result.hughestMark = nameOfHughestMark;
-        const nameOfLowestMark: string = _.minBy(cleanMarks, "avgMark")?.name ?? "not lowest";
-        result.lowestMark = nameOfLowestMark;
-        if (_.size(marks) === 1) {
-            const numAvgMark: number = formatToTwoDecimal(cleanMarks[0].avgMark) ?? 0;
-            result.avgMark = numAvgMark;
-        } else {
-            const numAvgMark: number = formatToTwoDecimal(_.meanBy(cleanMarks, "avgMark")) ?? 0;
-            result.avgMark = numAvgMark;
-        }
-        return result;
-    }
+function strToJsonStr(baseStr:string): string {
+
+  function replaceAll(strForReplace:string, search: string, replaceWith: string): string {
+    const cleanStr = _.join(_.split(strForReplace, search), replaceWith);
+    return cleanStr;
+  }
+
+  const arrForReplace = [
+    ["[", ""],
+    ["]", ""],
+    ["}, {", "}|{"],
+    ["'", '"'],
+  ]
+  let changeStr = baseStr;
+  for (const item in arrForReplace) {
+    changeStr = replaceAll(changeStr, arrForReplace[item][0], arrForReplace[item][1]);
+  }
+
+  const jsonStr = _.replace(changeStr, /(\w+:)|(\w+ :)/g, function(s) {
+    return '"' + s.substring(0, s.length-1) + '":';
+  });
+  return jsonStr;
 }
 
 
-interface holesInNumber {
-    num: number,
-    numHoles: number;
-}
+let rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 
-function calculateNumberHoles(number: number): holesInNumber {
-    let sumHoles: number = 0;
-    const ruleForHoles: {[index: number]: number} = {
-        0: 1,
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 1,
-        5: 0,
-        6: 1,
-        7: 0,
-        8: 2,
-        9: 1,
-    }
-    const absNumberToString = _.replace(number.toString(), "-", "");
-    const arrStrings: String[] = _.split(absNumberToString, "");
-    const arrNumbers: number[] = _.map(arrStrings, Number);
-    for (let i = 0; i < _.size(arrNumbers); i += 1) {
-        const numberHoles: number = ruleForHoles[arrNumbers[i]];
-        sumHoles = sumHoles + numberHoles;
-    }
-    return {num: number, numHoles: sumHoles}
-}
-
-
-export function sortArrByNumberOfHoles(
-    arr: number[] | undefined
-    ): number[] | undefined {
-        if (!arr || arr === []) {
-            return arr
-        } else {
-            const numberArr: holesInNumber[] = _.map(arr, calculateNumberHoles)
-            const sortedNumberArr: holesInNumber[] = _.sortBy(numberArr, "numHoles");
-            const resultArr: number[] = _.map(sortedNumberArr, "num");
-            return resultArr;
-        }
-}
+rl.question('Enter the number of the task you want to check (1, 2 or 3): ', (num) => {
+  if (num === '1') {
+    console.log("Enter the source data in one line.")
+    console.log('Example:')
+    console.log("[{name: 'Vasya', avgMark: 3.75}, {name: 'Lena', avgMark: 4.89}]")
+    rl.question('', (dataString) => {
+      try {
+        const jsonStr: string = strToJsonStr(dataString);
+        const arrJsonStr: string[] = _.split(jsonStr, "|");
+        const marks: Student[] | undefined = _.map(arrJsonStr, function(x) {return JSON.parse(x)});
+        console.log('==========================================');
+        console.log('Statistics:');
+        console.log(getStatistics(marks));
+      } catch (error) {
+        console.log("Format data input is not valid.");
+        console.log("Please try again. Enter the data according to the example.");
+        rl.close();
+      }
+      rl.close();
+    });
+  } else if (_.toString(num) === '2') {
+    console.log('Enter a number: ');
+    rl.question('', (value: string) => {      
+      const num: number = _.toNumber(value);
+      const result = uniqPermutationsNumbers(num);
+      if (result.type === "success") {
+        console.log('==========================================');
+        console.log(`Number of combinations in the file: ${result.countRows}`);
+        const currentPath: string = __dirname;
+        const filePath: string = currentPath + "/task2_result.txt";
+        console.log(`File is located at: ${filePath}`);
+      } else if (result.type === "error") {
+        console.log(result.error);
+      } else {
+        console.log("Sorry, unknown error. Please try again.");
+      }
+      rl.close();
+    });
+  } else if (num === '3') {
+    console.log('Enter an array of numbers, for example [1, 8, 95, 89, 0, -3]: ');
+    rl.question('', (value: string) => {   
+      const strValue: string = _.toString(value);
+      const strValueClean: string = _.join(_.slice(_.split(strValue, ""), 1, -1), "");
+      const arrStrings: string[] = _.split(_.replace(strValueClean, " ", ""), ',');
+      const arrNumbers: number[] = _.map(arrStrings, function(x) {return _.toNumber(x)});
+      const arrIsSorted: number[] | undefined = sortArrByNumberOfHoles(arrNumbers);
+      console.log('==========================================');
+      console.log('Look at the result:');
+      console.log(arrIsSorted);
+      rl.close();
+    });
+  } else {
+    console.log(`Not task with number ${num}`);
+    rl.close();
+  }
+});
